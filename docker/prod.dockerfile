@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.0-fpm
 
 # Arguments defined in docker-compose.yml
 ARG user
@@ -31,7 +31,6 @@ RUN docker-php-ext-install \
     bcmath \
     curl \
     gd \
-    json \
     mysqli \
     opcache \
     pdo \
@@ -45,17 +44,15 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
 RUN bash nodesource_setup.sh
 RUN apt-get install -y nodejs
 
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
+# Copy existing application directory permissions
+COPY . /var/app/current
 
 # Set working directory
-WORKDIR /var/www/html/app
+WORKDIR /var/app/current
 
-# Copy existing application directory permissions
-COPY --chown=$user:$user . /var/www/html/app
+# Assign permissions of the working directory to the www-data user
+RUN chown -R www-data:www-data /var/app/current
 
-USER $user
-
+# Expose port 80 and start php-fpm server (for FastCGI Process Manager)
 EXPOSE 80
+CMD ["php-fpm"]

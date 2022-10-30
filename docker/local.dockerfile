@@ -1,8 +1,4 @@
-FROM php:7.4-fpm
-
-# Arguments defined in docker-compose.yml
-ARG user
-ARG uid
+FROM php:8.0-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -31,7 +27,6 @@ RUN docker-php-ext-install \
     bcmath \
     curl \
     gd \
-    json \
     mysqli \
     opcache \
     pdo \

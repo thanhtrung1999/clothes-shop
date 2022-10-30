@@ -1,0 +1,116 @@
+{
+    "AWSEBDockerrunVersion": 2,
+    "volumes": [
+        {
+            "name": "clothes-shopping-app",
+            "host": {
+                "sourcePath": "/var/app/current"
+            }
+        },
+        {
+            "name": "nginx-confd",
+            "host": {
+                "sourcePath": "/var/app/current/docker/config/nginx/prod-conf.d/"
+            }
+        },
+        {
+            "name": "nginx-nginxconf",
+            "host": {
+                "sourcePath": "/var/app/current/docker/config/nginx/nginx.conf"
+            }
+        }
+    ],
+    "containerDefinitions": [
+        {
+            "name": "clothes-shopping_app",
+            "image": "thanhtrung1999/clothes-shopping-app",
+            "environment": [
+                {
+                    "name": "APP_NAME",
+                    "value": "Clothes Shopping App"
+                },
+                {
+                    "name": "APP_ENV",
+                    "value": "production"
+                },
+                {
+                    "name": "APP_KEY",
+                    "value": "base64:1M67J62e3LsdgvKNd0JL2VMMmvjekvd2m/J3UhvMntA="
+                },
+                {
+                    "name": "APP_DEBUG",
+                    "value": true
+                },
+                {
+                    "name": "APP_URL",
+                    "value": "http://clothes-shopping-app.us-east-1.elasticbeanstalk.com"
+                },
+                {
+                    "name": "DB_CONNECTION",
+                    "value": "mysql"
+                },
+                {
+                    "name": "DB_HOST",
+                    "value": "clothes-shopping-db.cb31t80tzvqj.us-east-1.rds.amazonaws.com"
+                },
+                {
+                    "name": "DB_PORT",
+                    "value": 3306
+                },
+                {
+                    "name": "DB_DATABASE",
+                    "value": "clothes_shopping"
+                },
+                {
+                    "name": "DB_USERNAME",
+                    "value": "admin"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "value": "admin123"
+                }
+            ],
+            "essential": true,
+            "memory": 256,
+            "mountPoints": [
+                {
+                    "sourceVolume": "clothes-shopping-app",
+                    "containerPath": "/var/app/current",
+                    "readOnly": false
+                }
+            ]
+        },
+        {
+            "name": "clothes-shopping_nginx_server",
+            "image": "nginx:1.19.6-alpine",
+            "essential": true,
+            "memory": 128,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+            "links": [
+                "clothes-shopping_app"
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "clothes-shopping-app",
+                    "containerPath": "/var/app/current",
+                    "readOnly": true
+                },
+                {
+                    "sourceVolume": "nginx-confd",
+                    "containerPath": "/etc/nginx/conf.d",
+                    "readOnly": true
+                },
+                {
+                    "sourceVolume": "nginx-nginxconf",
+                    "containerPath": "/etc/nginx/nginx.conf",
+                    "readOnly": true
+                }
+            ]
+        }
+    ]
+}
