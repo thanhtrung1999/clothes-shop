@@ -45,13 +45,13 @@ RUN bash nodesource_setup.sh
 RUN apt-get install -y nodejs
 
 # Copy existing application directory permissions
-COPY . /var/app/current
+COPY . /var/www/html/app
 
 # Set working directory
-WORKDIR /var/app/current
+WORKDIR /var/www/html/app
 
 # Assign permissions of the working directory to the www-data user
-RUN chown -R www-data:www-data /var/app/current
+RUN chown -R www-data:www-data /var/www/html/app
 
 # Expose port 80 and start php-fpm server (for FastCGI Process Manager)
 EXPOSE 80
