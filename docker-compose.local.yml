@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.8"
 
 services:
   #Laravel App
@@ -6,8 +6,6 @@ services:
     build:
       context: .
       dockerfile: ./docker/local.dockerfile
-    image: laravel_nginx_server_app
-    container_name: clothes-shopping_app
     working_dir: /var/www/html/app
     tty: true
     volumes:
@@ -19,7 +17,6 @@ services:
   #Nginx Service
   nginx:
     image: nginx:1.19.6-alpine
-    container_name: clothes-shopping_nginx_server
     tty: true
     ports:
       - "9999:80"
